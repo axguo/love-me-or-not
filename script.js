@@ -119,5 +119,27 @@ document.addEventListener('DOMContentLoaded', function() {
             input.style.transition = 'opacity 5s';
             input.nextElementSibling.style.transition = 'color 5s, font-style 5s';
         });
-    }, 50000); // 50 seconds
+
+        fadeInAudio('Minstrel_Dance(chosic.com).mp3');
+    }, 5000); // 50 seconds
 });
+
+
+function fadeInAudio(audioSrc) {
+    let audio = new Audio(audioSrc); // Create an audio element with your MP3 file
+    audio.volume = 0; // Start with the volume at 0
+    audio.play(); // Start playing the audio
+
+    let fadeTime = 3000; // Duration of the fade in milliseconds
+    let step = 0.01; // Volume increase step
+    let interval = fadeTime * step; // Calculate interval time
+
+    let fadeAudioInterval = setInterval(function() {
+        if (audio.volume < 1) {
+            audio.volume += step; // Increase the volume by the step amount
+            if (audio.volume > 0.5) audio.volume = 0.5; // Ensure the volume does not exceed 1
+        } else {
+            clearInterval(fadeAudioInterval); // Clear the interval once volume is 1
+        }
+    }, interval);
+}
