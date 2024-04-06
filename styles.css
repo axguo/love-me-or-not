@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #efdddd;
+    font-family: "Cardo", serif;
+}
+
+#flower, .flower {
+    width: 200px;
+    z-index: -1;
+}
+
+.container {
+    text-align: center;
+}
+
+.choices {
+    margin-top: 20px;
+}
+
+.choice {
+    display: block;
+    margin: 10px 0;
+    text-align: left;
+    padding: 0 20px;
+}
+
+.button {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.selected {
+    outline: 2px solid blue; /* Example style for highlighting */
+}
