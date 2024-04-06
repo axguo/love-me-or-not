@@ -17,7 +17,7 @@ function createAndPositionContainer(value) {
     choicesDiv.className = 'choices';
 
     let img = document.createElement('img');
-    img.src = 'cherry-petal.gif' + '?id=' + Math.floor(Math.random() * 100);;
+    img.src = 'cherry-petal.gif' + '?id=' + Math.floor(Math.random() * 10);;
     img.alt = 'animation of a falling rose petal';
     img.classList.add("flower");
     container.appendChild(img);
