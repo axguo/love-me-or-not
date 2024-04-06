@@ -15,6 +15,10 @@ body {
     z-index: -1;
 }
 
+.flower {
+    height: 200px;
+}
+
 .container {
     text-align: center;
 }
