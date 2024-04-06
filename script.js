@@ -59,7 +59,10 @@ function createAndPositionContainer(value) {
     }
 
     container.appendChild(choicesDiv);
-    document.body.appendChild(container);
+
+    img.onload = function() {
+        document.body.appendChild(container);
+    };
 
     lastChoicesDiv = choicesDiv;
     group += 1;
