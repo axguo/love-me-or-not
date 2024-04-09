@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         fadeInAudio('Minstrel_Dance(chosic.com).mp3');
-    }, 5000); // 50 seconds
+    }, 50000); // 50 seconds
 });
 
 
