@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         fadeInAudio('chimes.mp3');
-    }, 10000);
+    }, 200000);
 });
 
 function fadeInAudio(audioSrc) {
