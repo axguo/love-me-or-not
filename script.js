@@ -185,16 +185,25 @@ const decisionTree = {
             "i planted flowers": { next: { "planted": 0.5 } },
         },
     },
+    "remember-2": {
+        interactionType: 'dropdown',
+        defaultOption: "remember when",
+        options: {
+            "he bought me flowers": { next: { "forever-him": 1 } },
+            "i made him flowers": { next: { "made of": 1 } },
+            "i planted flowers": { next: { "planted": 0.5 } },
+        },
+    },
     "planted": {
         interactionType: 'checkbox',
         prompt: "a gift for you",
-        options: ["🌹 🌹 🌹 🌹 🌹 🌹", "🌷 🌷 🌷 🌷 🌷 🌷", "💐 💐 💐 💐 💐 💐", "🌻 🌻 🌻 🌻 🌻 🌻", "🌼 🌼 🌼 🌼 🌼 🌼", "🌸 🌸 🌸 🌸 🌸 🌸", "🌱 🌱 🌱 🌱 🌱 🌱"],
-        next: { "loves me days": 0.7, "remember": 0.3 },
+        options: ["🌹 🌷 🌹 🌷 🌹 🌷", "🌷 🌷 🌷 🌷 🌷 🌷", "🌼 🌻 🌼 🌻 🌼 🌻", "🌻 🌻 🌻 🌻 🌻 🌻", "🌸 🌸 🌸 🌸 🌸 🌸", "💐 💐 💐 💐 💐 💐", "🌱 🌱 🌱 🌱 🌱 🌱"],
+        next: { "loves me days": 0.7, "secret-2": 0.3 },
         submitOption: "take care of them please"
     },
     "made of": {
         interactionType: 'dropdown',
-        defaultOption: "made of",
+        defaultOption: "fashioned from",
         options: {
             "paper": { next: { "forever": 1 } },
             "clay": { next: { "forever": 1 } },
@@ -225,10 +234,10 @@ const decisionTree = {
         interactionType: 'dropdown',
         defaultOption: "I have many roles",
         options: {
-            "editor of apologies": { next: { "apologies": 1 } },
             "mender and mended": { next: { "avocado": 1 } },
             "a memory for you": { next: { "remember": 1 } },
             "maintainer": { next: { "planted": 1 } },
+            "editor of apologies": { next: { "apologies": 1 } },
         },
         next: "start"
     },
@@ -247,6 +256,29 @@ const decisionTree = {
             "maybe not": { next: { "loves-me-not-options": 0.5, "sky": 0.5 } },
         },
         next: "start"
+    },
+    "secret-1": {
+        interactionType: 'radio',
+        prompt: 'can i tell you a secret?',
+        options: {
+            "whisper yes": { next: { "i love you": 1 } },
+            "whisper no": { next: { "remember": 1 } },
+        },
+    },
+    "secret-2": {
+        interactionType: 'radio',
+        prompt: 'can you tell me a secret?',
+        options: {
+            "maybe": { next: { "remember-2": 1 } },
+            "i'll do the same": { next: { "secret-1": 1 } },
+        },
+    },
+    "i love you": {
+        interactionType: 'checkbox',
+        prompt: "I will always",
+        options: ["know", "convict", "witness", "love"],
+        next: { "end": 1 },
+        submitOption: "you"
     },
 };
 
@@ -293,6 +325,9 @@ function createAndPositionContainer(value) {
     } else {
         nextStage = chooseNextStage(decisionTree[currentStage].next);
     }
+    if (nextStage === "end") {
+        triggerEndEffects();
+    }
     options = decisionTree[nextStage].options;
     interactionType = decisionTree[nextStage].interactionType || 'radio'; // Default to radio
     currentStage = nextStage;
@@ -309,7 +344,7 @@ function createAndPositionContainer(value) {
             createSlider(options, choicesDiv);
             break;
         default: 
-            createRadioButtons(options, choicesDiv);
+            createRadioButtons(options, choicesDiv, decisionTree[nextStage].prompt || '');
     }
 
     container.appendChild(choicesDiv);
@@ -410,7 +445,11 @@ function createSlider(options, container) {
     createSubmitButton(submitButtonText, container);
 }
 
-function createRadioButtons(options, container) {
+function createRadioButtons(options, container, promptText) {
+    let promptDiv = document.createElement('div');
+    promptDiv.className = "prompt";
+    promptDiv.textContent = promptText;
+    container.appendChild(promptDiv);
     for (let optionValue in options) {
         let option = options[optionValue];
         let label = createRadioButton(optionValue, optionValue);
@@ -470,68 +509,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function () {
-        document.querySelectorAll('input[type="radio"]').forEach(function (btn) {
-            btn.removeEventListener('change', handleRadioButtonChange);
-        });
+function triggerEndEffects() {
+    document.body.style.backgroundColor = 'black';
+    document.body.style.transition = 'background-color 10s';
+    document.querySelectorAll('.choices').forEach(function (choice) {
+        choice.style.opacity = '0'; // Set initial opacity to 0
+        choice.style.transition = 'opacity 5s'; // Set transition to change opacity over 5 seconds
+        setTimeout(function () {
+            choice.style.opacity = '1'; // Change opacity to 1 after a delay to ensure transition occurs
+        }, 10); // Small delay to ensure the transition property is applied before changing opacity
+    });
 
-        document.querySelectorAll('input[type="checkbox"], input[type="range"]').forEach(function (btn) {
-            btn.removeEventListener('change', handleSubmitButtonClick);
-        });
+    document.querySelectorAll('button, .background, .prompt').forEach(function (btn) {
+        btn.style.opacity = '1';
+        btn.style.color = 'transparent';
+        btn.style.transition = 'opacity 5s';
+        setTimeout(function () {
+            btn.style.opacity = '0'; // Change opacity to 1 after a delay to ensure transition occurs
+        }, 10);
+    });
 
-        document.querySelectorAll('select').forEach(function (btn) {
-            btn.removeEventListener('change', handleDropdownChange);
-        });
+    document.querySelectorAll('select').forEach(function (dropdown) {
+        dropdown.style.color = 'white';
+        dropdown.style.backgroundColor = 'transparent';
+        dropdown.style.border = 'transparent';
+        dropdown.style.fontStyle = 'italic';
+        dropdown.style.transition = 'color 5s, background-color 5s, border 5s, font-style 5s';
+        dropdown.style.WebkitAppearance = 'none'; // Hide default arrow in WebKit browsers
+        dropdown.style.MozAppearance = 'none'; // Hide default arrow in Mozilla browsers
+        dropdown.style.appearance = 'none'; // Standard way to hide the arrow across browsers
+    });
 
+    document.querySelectorAll('.choice input, input').forEach(function (input) {
+        if (input.checked) {
+            input.nextElementSibling.style.color = 'white';
+            input.nextElementSibling.style.fontStyle = 'italic';
+        } else {
+            input.nextElementSibling.style.color = 'transparent';
+        }
+        input.style.opacity = '0';
+        input.style.transition = 'opacity 5s';
+        input.nextElementSibling.style.transition = 'color 5s, font-style 5s';
+    });
 
-        document.body.style.backgroundColor = 'black';
-        document.body.style.transition = 'background-color 10s';
-
-        document.querySelectorAll('.choices').forEach(function (choice) {
-            choice.style.opacity = '0'; // Set initial opacity to 0
-            choice.style.transition = 'opacity 5s'; // Set transition to change opacity over 5 seconds
-            setTimeout(function () {
-                choice.style.opacity = '1'; // Change opacity to 1 after a delay to ensure transition occurs
-            }, 10); // Small delay to ensure the transition property is applied before changing opacity
-        });
-
-        document.querySelectorAll('button, .background, .prompt').forEach(function (btn) {
-            btn.style.opacity = '1';
-            btn.style.color = 'transparent';
-            btn.style.transition = 'opacity 5s';
-            setTimeout(function () {
-                btn.style.opacity = '0'; // Change opacity to 1 after a delay to ensure transition occurs
-            }, 10);
-        });
-
-        document.querySelectorAll('select').forEach(function (dropdown) {
-            dropdown.style.color = 'white';
-            dropdown.style.backgroundColor = 'transparent';
-            dropdown.style.border = 'transparent';
-            dropdown.style.fontStyle = 'italic';
-            dropdown.style.transition = 'color 5s, background-color 5s, border 5s, font-style 5s';
-            dropdown.style.WebkitAppearance = 'none'; // Hide default arrow in WebKit browsers
-            dropdown.style.MozAppearance = 'none'; // Hide default arrow in Mozilla browsers
-            dropdown.style.appearance = 'none'; // Standard way to hide the arrow across browsers
-        });
-
-
-        document.querySelectorAll('.choice input, input').forEach(function (input) {
-            if (input.checked) {
-                input.nextElementSibling.style.color = 'white';
-                input.nextElementSibling.style.fontStyle = 'italic';
-            } else {
-                input.nextElementSibling.style.color = 'transparent';
-            }
-            input.style.opacity = '0';
-            input.style.transition = 'opacity 5s';
-            input.nextElementSibling.style.transition = 'color 5s, font-style 5s';
-        });
-
-        fadeInAudio('chimes.mp3');
-    }, 200000);
-});
+    fadeInAudio('chimes.mp3');
+}
 
 function fadeInAudio(audioSrc) {
     let audio = new Audio(audioSrc);
@@ -565,7 +587,9 @@ function handleSubmitButtonClick() {
 
 document.addEventListener('click', function(event) {
     if (event.target.matches('button, input[type="radio"], input[type="checkbox"], input[type="range"], select, option')) {
-        let audio = new Audio('click.mp3');
+        // Existing functionality to play 'ding.mp3'
+        let audio = new Audio('click2.mp3');
+        audio.volume = 0.1; // Adjust the volume to 50%
         audio.play();
     }
 });

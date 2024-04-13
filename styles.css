@@ -70,13 +70,13 @@ label {
 
 button {
     min-width: 100px;
-    border: 1px solid #5a5a5a;
+    border: 1px solid #8c8c8c;
     border-radius: 4px;
     cursor: pointer;
     display: inline-block;
     vertical-align: middle;
     margin: 5px auto;
-    padding: 2px 5px;
+    padding: 0px 1px;
     font-family: "Cardo", serif;
     font-size: 1em;
 }
@@ -84,6 +84,7 @@ button {
 span {
     display: inline-block;
     vertical-align: middle;
+    padding: 0 2px;
 }
 
 /* Radio buttons */
